@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'folder_screen.dart';
+import 'card_screen.dart';
 import 'databasehelper.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize the database
+  await DatabaseHelper.instance.database;
   runApp(const MyApp());
 }
 
@@ -11,64 +16,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Card Manager App',
+      title: 'Folder and Card Manager',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const FoldersScreen(),
-    );
-  }
-}
-
-class FoldersScreen extends StatelessWidget {
-  const FoldersScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Card Folders')),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper.instance.queryFolders(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final folders = snapshot.data!;
-          return ListView.builder(
-            itemCount: folders.length,
-            itemBuilder: (context, index) {
-              final folder = folders[index];
-              return ListTile(
-                title: Text(folder['name']),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CardsScreen(folderId: folder['id']),
-                    ),
-                  );
-                },
-              );
-            },
+      home: const FolderScreen(), // Set FolderScreen as the home screen
+      onGenerateRoute: (settings) {
+        if (settings.name == '/cards') {
+          final int folderId = settings.arguments as int;
+          return MaterialPageRoute(
+            builder: (context) => CardScreen(folderId: folderId),
           );
-        },
-      ),
-    );
-  }
-}
-
-class CardsScreen extends StatelessWidget {
-  final int folderId;
-
-  const CardsScreen({super.key, required this.folderId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Cards')),
-      body: Center(
-        child: Text('Display cards for folder $folderId here.'),
-      ),
+        }
+        return null;
+      },
     );
   }
 }
