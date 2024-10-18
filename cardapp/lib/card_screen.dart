@@ -44,8 +44,10 @@ class _CardScreenState extends State<CardScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(card[DatabaseHelper.columnImageUrl]),
-                      Text(card['name']),
+                      Image.asset(card['image_url']),
+                      Text(card[DatabaseHelper.columnCardName]),
+                   
+                      Text(card[DatabaseHelper.columnImageUrl]),
                     ],
                   ),
                 ),

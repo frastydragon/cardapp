@@ -4,24 +4,23 @@ import 'package:path/path.dart';
 import 'dart:io';
 
 class DatabaseHelper {
-  static final _databaseName = "CardApp.db";
-  static final _databaseVersion = 1;
+  static const _databaseName = "CardApp.db";
+  static const _databaseVersion = 1;
 
-  static final tableFolders = 'folders';
-  static final tableCards = 'cards';
+  static const tableFolders = 'folders';
+  static const cards = 'cards';
 
-  static final columnFolderId = 'id';
-  static final columnFolderName = 'name';
-  static final columnTimestamp = 'timestamp';
+  static const columnFolderId = 'id';
+  static const columnFolderName = 'name';
 
-  static final columnCardId = 'id';
-  static final columnCardName = 'name';
-  static final columnSuit = 'suit';
-  static final columnImageUrl = 'image_url';
-  static final columnFolderIdForeign = 'folder_id';
+  static const columnCardId = 'id';
+  static const columnCardName = 'name';
+  static const columnSuit = 'suit';
+  static const columnImageUrl = 'image_url';
+  static const columnFolderIdForeign = 'folder_id';
 
   DatabaseHelper._privateConstructor();
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  static DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
   static Database? _database;
 
@@ -42,16 +41,15 @@ class DatabaseHelper {
   }
 
   Future _onCreate(Database db, int version) async {
-    await db.execute('''
+    await db.execute(''' 
       CREATE TABLE $tableFolders (
         $columnFolderId INTEGER PRIMARY KEY AUTOINCREMENT,
-        $columnFolderName TEXT NOT NULL,
-        $columnTimestamp TEXT NOT NULL
+        $columnFolderName TEXT NOT NULL
       )
     ''');
 
-    await db.execute('''
-      CREATE TABLE $tableCards (
+    await db.execute(''' 
+      CREATE TABLE $cards (
         $columnCardId INTEGER PRIMARY KEY AUTOINCREMENT,
         $columnCardName TEXT NOT NULL,
         $columnSuit TEXT NOT NULL,
@@ -60,67 +58,19 @@ class DatabaseHelper {
         FOREIGN KEY ($columnFolderIdForeign) REFERENCES $tableFolders ($columnFolderId)
       )
     ''');
-
-    // Prepopulate folders and cards
-    await _prepopulateFolders(db);
-    await _prepopulateCards(db);
-  }
-
-  Future<void> _prepopulateFolders(Database db) async {
-    List<Map<String, dynamic>> suits = [
-      {'name': 'Hearts'},
-      {'name': 'Spades'},
-      {'name': 'Diamonds'},
-      {'name': 'Clubs'},
-    ];
-
-    for (var suit in suits) {
-      await db.insert(tableFolders, {
-        columnFolderName: suit['name'],
-        columnTimestamp: DateTime.now().toString(),
-      });
-    }
-  }
-
-  Future<void> _prepopulateCards(Database db) async {
-    List<Map<String, dynamic>> suits = [
-      {'name': 'Hearts', 'folderId': 1},
-      {'name': 'Spades', 'folderId': 2},
-      {'name': 'Diamonds', 'folderId': 3},
-      {'name': 'Clubs', 'folderId': 4},
-    ];
-
-    List<String> cardNames = [
-      'ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'
-    ];
-
-    for (var suit in suits) {
-      for (var cardName in cardNames) {
-        String formattedSuit = suit['name'].toLowerCase();
-        String cardImageName = '${cardName}_of_$formattedSuit.png';
-        String imageUrl = 'assets/$cardImageName';
-        
-        await db.insert(tableCards, {
-          columnCardName: cardName,
-          columnSuit: suit['name'],
-          columnImageUrl: imageUrl,
-          columnFolderIdForeign: suit['folderId'],
-        });
-      }
-    }
   }
 
   // Insert a new card
   Future<int> insertCard(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db!.insert(tableCards, row);
+    return await db!.insert(cards, row);
   }
 
   // Query all cards in a folder
   Future<List<Map<String, dynamic>>> queryCardsByFolder(int folderId) async {
     Database? db = await instance.database;
     return await db!.query(
-      tableCards,
+      cards,
       where: '$columnFolderIdForeign = ?',
       whereArgs: [folderId],
     );
@@ -130,7 +80,7 @@ class DatabaseHelper {
   Future<int> deleteCard(int id) async {
     Database? db = await instance.database;
     return await db!.delete(
-      tableCards,
+      cards,
       where: '$columnCardId = ?',
       whereArgs: [id],
     );
@@ -145,10 +95,11 @@ class DatabaseHelper {
   // Get the count of cards in a folder
   Future<int> getCardCountInFolder(int folderId) async {
     Database? db = await instance.database;
-    final result = await db!.rawQuery(
-      'SELECT COUNT(*) FROM $tableCards WHERE $columnFolderIdForeign = ?',
+    var result = await db!.rawQuery(
+      'SELECT COUNT(*) FROM $cards WHERE $columnFolderIdForeign = ?',
       [folderId],
     );
     return Sqflite.firstIntValue(result) ?? 0;
   }
 }
+
