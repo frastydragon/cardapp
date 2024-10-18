@@ -91,13 +91,14 @@ class DatabaseHelper {
     ];
 
     List<String> cardNames = [
-      'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'
+      'ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'
     ];
 
     for (var suit in suits) {
       for (var cardName in cardNames) {
-        String cardImageName = '$cardName${suit['name'].substring(0, 1)}.png';
-        String imageUrl = 'https://example.com/$cardImageName';
+        String formattedSuit = suit['name'].toLowerCase();
+        String cardImageName = '${cardName}_of_$formattedSuit.png';
+        String imageUrl = 'assets/$cardImageName';
         
         await db.insert(tableCards, {
           columnCardName: cardName,

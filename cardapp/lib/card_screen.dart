@@ -44,7 +44,7 @@ class _CardScreenState extends State<CardScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.network(card['image_url']),
+                      Image.asset(card[DatabaseHelper.columnImageUrl]),
                       Text(card['name']),
                     ],
                   ),
@@ -71,7 +71,7 @@ class _CardScreenState extends State<CardScreen> {
     // Example card to add
     Map<String, dynamic> card = {
       'name': 'Ace of Spades',
-      'image_url': 'https://example.com/ace_of_spades.png',
+      'image_url': '',
       'folder_id': widget.folderId,
     };
 
