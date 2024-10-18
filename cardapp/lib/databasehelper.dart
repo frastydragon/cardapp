@@ -5,7 +5,7 @@ import 'dart:io';
 
 class DatabaseHelper {
   static const _databaseName = "CardApp.db";
-  static const _databaseVersion = 2;
+  static const _databaseVersion = 5;
 
   static const tableFolders = 'folders';
   static const cards = 'cards';
