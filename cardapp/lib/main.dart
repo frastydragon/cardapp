@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const FolderScreen(), // Set FolderScreen as the home screen
+      home: FolderScreen(), // Set FolderScreen as the home screen
       onGenerateRoute: (settings) {
         if (settings.name == '/cards') {
           final int folderId = settings.arguments as int;

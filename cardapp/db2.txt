@@ -131,5 +131,13 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryCardsByFolder(int folderId) async {
   return await _db.query(cards, where: '$foreignId = ?', whereArgs: [folderId]);
 }
-
+floatingActionButton: ElevatedButton(
+      onPressed: () async {
+        await dbHelper.clearDatabase();
+        setState(() {
+      // Optionally refresh your UI
+        });
+       },
+      child: const Icon(Icons.delete),
+    ),
 }

@@ -4,14 +4,13 @@ import 'databasehelper.dart';
 import 'card_screen.dart';
 
 class FolderScreen extends StatefulWidget {
-  const FolderScreen({super.key});
-
   @override
   _FolderScreenState createState() => _FolderScreenState();
 }
 
 class _FolderScreenState extends State<FolderScreen> {
-  final dbHelper = DatabaseHelper.instance; 
+  final dbHelper = DatabaseHelper.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,15 +29,13 @@ class _FolderScreenState extends State<FolderScreen> {
             itemBuilder: (context, index) {
               final folder = folders[index];
               return ListTile(
-                title: Text(folder['name']),
-                //subtitle: Text(folder['timestamp']),
+                title: Text(folder[DatabaseHelper.columnFolderName]),
                 onTap: () {
-                  // Navigate to the CardsScreen for the selected folder
+                  // Navigate to card screen for the selected folder
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          CardScreen(folderId: folder['id']),
+                      builder: (context) => CardScreen(folderId: folder[DatabaseHelper.columnFolderId]),
                     ),
                   );
                 },
@@ -47,6 +44,8 @@ class _FolderScreenState extends State<FolderScreen> {
           );
         },
       ),
+
     );
   }
+
 }

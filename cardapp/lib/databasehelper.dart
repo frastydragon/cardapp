@@ -5,7 +5,7 @@ import 'dart:io';
 
 class DatabaseHelper {
   static const _databaseName = "CardApp.db";
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 2;
 
   static const tableFolders = 'folders';
   static const cards = 'cards';
@@ -38,6 +38,7 @@ class DatabaseHelper {
       version: _databaseVersion,
       onCreate: _onCreate,
     );
+    
   }
 
   Future _onCreate(Database db, int version) async {
@@ -58,8 +59,23 @@ class DatabaseHelper {
         FOREIGN KEY ($columnFolderIdForeign) REFERENCES $tableFolders ($columnFolderId)
       )
     ''');
+     await _prepopulateFolders(db);
   }
+  Future<void> _prepopulateFolders(Database db) async {
+    List<Map<String, dynamic>> folders = [
+      {'name': 'Hearts'},
+      {'name': 'Spades'},
+      {'name': 'Diamonds'},
+      {'name': 'Clubs'},
+    ];
 
+    for (var folder in folders) {
+      await db.insert(tableFolders, {
+        columnFolderName: folder['name'],
+      });
+    }
+  }
+ 
   // Insert a new card
   Future<int> insertCard(Map<String, dynamic> row) async {
     Database? db = await instance.database;
@@ -85,7 +101,6 @@ class DatabaseHelper {
       whereArgs: [id],
     );
   }
-
   // Query all folders
   Future<List<Map<String, dynamic>>> queryFolders() async {
     Database? db = await instance.database;
@@ -101,5 +116,5 @@ class DatabaseHelper {
     );
     return Sqflite.firstIntValue(result) ?? 0;
   }
-}
 
+}
